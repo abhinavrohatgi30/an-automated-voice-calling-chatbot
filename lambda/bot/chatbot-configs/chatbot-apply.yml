@@ -1,0 +1,80 @@
+intents:
+- intentName: InterestedIntent
+  intentFlow:
+   root_node:
+    prompt : "We have found your profile to be suitable for :jobCompanyName , they are looking for a :jobTitle with :jobMinExperience to :jobMaxExperience years of experience for the :jobLocation location and are ready to offer between :jobMinCTC to :jobMaxCTC lacs. If you find this oppurtunity interesting say APPLY or else say NOT RELEVANT"
+    failurePrompt : "Sorry, could you please repeat that?"
+    slotName: "ApplyStatus"
+    actionMetadata:
+     "status" : "CALL_ANSWERED"
+    triggerAction :
+     - saveStatus
+    response_nodes :
+     "apply" : apply_node
+     "not relevant" : terminal_node_for_reject
+
+   apply_node:
+    prompt : "Thanks, your application has been recorded and will be reviewed by the recruiter. Would you be willing to provide us a bit more information. Kindly reply with YES or NO."
+    failurePrompt : "Sorry, could you please repeat that?"
+    triggerAction:
+     - saveStatus
+     - saveApplyStatus 
+    slotName: "BooleanQuestionStatus"
+    actionMetadata:
+     "status" : "APPLY"
+    response_nodes : 
+     "yes" : ask_first_question_node
+     "no" : terminal_node_for_negative_ask_question
+  
+   ask_first_question_node:
+    prompt : "Have you applied or been interviewed in :jobCompanyName in the last 6 months ? Kindly reply with YES or NO"
+    failurePrompt : "Sorry, could you please repeat that?"
+    slotName: "BooleanQuestionStatus"
+    response_nodes : 
+     "yes" : ask_second_question_node
+     "no" : ask_second_question_node
+
+   ask_second_question_node:
+    prompt : "Would you be willing to relocate to :jobLocation ? Kindly reply with YES or NO"
+    failurePrompt : "Sorry, could you please repeat that?"
+    slotName: "BooleanQuestionStatus"
+    response_nodes : 
+     "yes" : ask_third_question_node
+     "no" : ask_third_question_node
+
+   ask_third_question_node:
+    prompt : "Would you be willing to join if the :jobCompanyName gives you a hike of 20 to 30 percent ? Kindly reply with YES or NO."
+    failurePrompt : "Sorry, could you please repeat that?"
+    slotName: "BooleanQuestionStatus"
+    response_nodes : 
+     "yes" : terminal_node_for_flow
+     "no" : terminal_node_for_flow
+
+   terminal_node_for_reject:
+    actionMetadata:
+     "status" : "REJECT"
+    triggerAction:
+     - saveRejectStatus
+     - saveStatus 
+    prompt : "Thanks for reviewing your job recommendation. We have marked the job as not relevant and will not be forwarding your profile to the recruiter. Bye!"
+
+   terminal_node_for_negative_ask_question:
+    prompt : "Thanks for reviewing your job recommendation. We have processed your application, your profile will now be reviewed by the recruiter. Bye!"
+
+   terminal_node_for_flow:
+    actionMetadata:
+     "status" : "APPLY_WITH_QUESTION_ANSWERED"
+    triggerAction:
+     - saveQuestionaireAnswers 
+     - saveStatus 
+    prompt : "Thanks for reviewing your job recommendation. We have processed your application and noted down your answers to the questions asked, your profile will now be reviewed by the recruiter. Bye!"
+
+- intentName: NotInterestedIntent
+  intentFlow:
+   root_node:
+    prompt : "Thanks, we have noted your interest and will not be contacting you further"
+    actionMetadata:
+     "status" : "NOT_INTERESTED"
+    triggerAction :
+     - saveNotInterested
+     - saveStatus

@@ -1,0 +1,82 @@
+intents:
+- intentName: InterestedIntent
+  intentFlow:
+   root_node:
+    prompt : "You are now ready to move ahead with the interview process at :jobCompanyName . Choose from the following time slots for an in-person interview. <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 1 if you are available on :slot1Time </prosody> <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 2 if you are available on :slot2Time </prosody> <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 3 if you are available on :slot3Time </prosody> <break time=\"1s\"/> <prosody rate=\"90%\"> Say REPEAT to hear the slots again. </prosody>"
+    failurePrompt : "Sorry, kindly reply by saying slot and then number. For example slot one"
+    slotName: "SlotThreeSelect"
+    actionMetadata:
+     "status" : "CALL_ANSWERED"
+    triggerAction :
+     - saveStatus
+    response_nodes :
+     "slot1" : slot1_node
+     "slot2" : slot2_node
+     "slot3" : slot3_node
+     "repeat" : repeat_node
+     
+   slot1_node:
+    prompt : "You have selected :slot1Time and we will be sending a confirmation email shortly with the details. Thank you for choosing BigShyft for your next big career shift."
+    actionMetadata:
+     "status" : "SLOT_1_SELECTED"
+    triggerAction :
+     - saveStatus
+
+   slot2_node:
+    prompt : "You have selected :slot2Time and we will be sending a confirmation email shortly with the details. Thank you for choosing BigShyft for your next big career shift."
+    actionMetadata:
+     "status" : "SLOT_2_SELECTED"
+    triggerAction :
+     - saveStatus
+
+   slot3_node:
+    prompt : "You have selected :slot3Time and we will be sending a confirmation email shortly with the details. Thank you for choosing BigShyft for your next big career shift."
+    actionMetadata:
+     "status" : "SLOT_3_SELECTED"
+    triggerAction :
+     - saveStatus
+
+   repeat_node:
+    prompt : "<prosody rate=\"90%\"> Say Slot 1 if you are available on :slot1Time </prosody>  <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 2 if you are available on :slot2Time </prosody> <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 3 if you are available on :slot3Time </prosody>  <break time=\"1s\"/> <prosody rate=\"90%\"> Say REPEAT to hear the slots one last time </prosody>"
+    failurePrompt : "Sorry, kindly reply by saying slot and then number. For example slot one"
+    slotName: "SlotThreeSelect"
+    actionMetadata:
+     "status" : "REPEAT_REQUESTED"
+    triggerAction :
+     - saveStatus
+    response_nodes :
+     "slot1" : slot1_node
+     "slot2" : slot2_node
+     "slot3" : slot3_node
+     "repeat" : repeat_node_2
+
+   repeat_node_2:
+    prompt : "<prosody rate=\"90%\"> Say Slot 1 if you are available on :slot1Time </prosody>  <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 2 if you are available on :slot2Time </prosody> <break time=\"1s\"/> <prosody rate=\"90%\"> Say Slot 3 if you are available on :slot3Time </prosody>  <break time=\"1s\"/> <prosody rate=\"90%\"> Say REPEAT to hear the slots one last time </prosody>"
+    failurePrompt : "Sorry, kindly reply by saying slot and then number. For example slot one"
+    slotName: "SlotThreeSelect"
+    actionMetadata:
+     "status" : "REPEAT_REQUESTED_2"
+    triggerAction :
+     - saveStatus
+    response_nodes :
+     "slot1" : slot1_node
+     "slot2" : slot2_node
+     "slot3" : slot3_node
+     "repeat" : terminate_node
+   
+   terminate_node:
+    prompt : "Sorry, you have exceeded the maximum requests for repetition."
+    actionMetadata:
+     "status" : "CALL_TERMINATED"
+    triggerAction :
+     - saveStatus
+   
+- intentName: NotInterestedIntent
+  intentFlow:
+   root_node:
+    prompt : "Thanks, we have noted your interest and will be contacting you at a later time"
+    actionMetadata:
+     "status" : "NOT_INTERESTED"
+    triggerAction :
+     - saveNotInterested
+     - saveStatus

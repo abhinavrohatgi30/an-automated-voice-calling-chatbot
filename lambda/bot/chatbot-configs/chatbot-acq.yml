@@ -1,0 +1,47 @@
+intents:
+- intentName: NotInterestedIntent
+  intentFlow:
+   root_node:
+    triggerAction: 
+     - saveStatus
+     - saveNotInterested
+    actionMetadata:
+     "status" : "NOT_INTERESTED"
+    prompt : "Thank you for your time. You can login to www.bigshift.com and use our free services whenever you are in search of a premium job."
+
+- intentName: NeedSupport
+  intentFlow:
+   root_node:
+    triggerAction: 
+     - saveStatus
+    actionMetadata:
+     "status" : "NEED_SUPPORT"
+    prompt : "Our counselor will contact you and help you with your queries. However, do you want to explore similar jobs. Please say YES or NO"
+    failurePrompt : "Sorry, could you please repeat that?"
+    slotName: "BooleanQuestionStatus"
+    response_nodes : 
+     "yes" : terminal_node_for_need_support
+     "no" : confirm_reject_node
+
+   terminal_node_for_need_support:
+    triggerAction: 
+     - saveStatus
+    actionMetadata:
+     "status" : "NEED_SUPPORT_NOT_INTERESTED_IN_EXPLORE_MORE_JOBS"
+    prompt : "Your interest has been recorded. This is a completely free service. We eill be sending you an e-mail with password reset link after enrolling you on our portal so that you can apply for similar jobs. Thank you for your time"
+    
+   confirm_reject_node:
+    triggerAction: 
+     - saveStatus
+    actionMetadata:
+     "status" : "NEED_SUPPORT_INTERESTED_IN_EXPLORE_MORE_JOBS"
+    prompt : "Thank you for your time. You can login to www.bigshift.com and use our free services whenever you are in search of a premium job."
+
+- intentName: InterestedIntent
+  intentFlow:
+   root_node:
+    prompt : "Great! Your interest has been recorded. This is a completely free service. We will be sending you an e-mail with a password reset link after enrolling you on our portal so that you can apply for the job. Thank you for your time"
+    triggerAction: 
+     - saveStatus
+    actionMetadata:
+     "status" : "INTERESTED"
